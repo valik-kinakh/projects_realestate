@@ -37,7 +37,7 @@ const Calculate = () => {
     const {isOpen, onOpen, onClose} = useDisclosure();
 
     const onSubmit = async (values) => {
-        const price = await axios.post('https://lnu-server.onrender.com/v1/v1/buildings/calculate', values)
+        const price = await axios.post('https://lnu-server.onrender.com/v1/buildings/calculate', values)
             .then((value) => value.data?.price);
         setPrice(price);
     }
