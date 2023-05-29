@@ -33,13 +33,21 @@ const types = filterData.at(-1)?.items;
 
 const Calculate = () => {
     const [price, setPrice] = useState('');
+    const [loading, setLoading] = useState(false);
     const {register, handleSubmit, formState: {errors}} = useForm();
     const {isOpen, onOpen, onClose} = useDisclosure();
 
     const onSubmit = async (values) => {
+        setLoading(true);
         const price = await axios.post('https://lnu-server.onrender.com/v1/buildings/calculate', values)
-            .then((value) => value.data?.price);
-        setPrice(price);
+            .then((value) => value.data?.price).finally(() => {
+                setLoading(false);
+            });
+        if (values.rooms > 3 || values.area > 100 ){
+            setPrice(Number(price)/10 * 2);
+            return;
+        }
+        setPrice(Number(price)/10);
     }
 
     return <Box border='2px' borderRadius='24px' borderColor='gray.200' color='black.400' maxWidth='500px' margin='auto'
@@ -137,7 +145,7 @@ const Calculate = () => {
                 <ModalCloseButton/>
                 <ModalBody>
                     <Flex justifyContent='center'>
-                        <strong>Predicted price: </strong>{price}
+                        <strong>Predicted price: </strong>{loading ? <span>Loading...</span> : price}
                     </Flex>
                 </ModalBody>
 
