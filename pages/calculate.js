@@ -39,15 +39,24 @@ const Calculate = () => {
 
     const onSubmit = async (values) => {
         setLoading(true);
-        const price = await axios.post('https://lnu-server.onrender.com/v1/buildings/calculate', values)
+        let price = await axios.post('https://lnu-server.onrender.com/v1/buildings/calculate', values)
             .then((value) => value.data?.price).finally(() => {
                 setLoading(false);
             });
         if (values.rooms > 3 || values.area > 100 ){
-            setPrice(Number(price)/10 * 2);
-            return;
+            price = Number(price)/10 * 2;
+        }else {
+            price = Number(price)/10;
         }
-        setPrice(Number(price)/10);
+
+        if (values.zone == 1){
+            price = price * 0.93;
+        }else if (values.zone == 2){
+            price = price * 1.01;
+        }else if (values.zone == 3){
+            price = price * 1.07;
+        }
+        setPrice(price);
     }
 
     return <Box border='2px' borderRadius='24px' borderColor='gray.200' color='black.400' maxWidth='500px' margin='auto'
